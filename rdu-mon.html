@@ -28,9 +28,16 @@
     			if (this.readyState == 4 && this.status == 200) {
 				console.log(this.responseText);
 				document.getElementById(name+"-res-msg").innerHTML = this.responseText;
-				document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-info btn-circle" disabled="true"><i class="fa fa-check"></i></button>';
+				if ( this.responseText == "service unavialable" ){
+					document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i></button>';
+					document.getElementById(name+"-res-msg").innerHTML = "Service is unavialable";
+				}else{
+					document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-info btn-circle"><i class="fa fa-check"></i></button>';
+				}
     			}
   		};
+		document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button>';
+		document.getElementById(name+"-res-msg").innerHTML = 'checking '+name+' service...';
   		xhttp.open("POST", "call_api.php", true);
   		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   		xhttp.send("url="+url);
@@ -39,7 +46,7 @@
 	function check_btn(){
 		console.log("Run checking");
 		document.getElementById('panel-body-id').style = "display:none";
-		call_api("kong", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591");	
+		call_api("kong", "http://164.115.35.167/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591");	
 		call_api("api", "http://164.115.35.168/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591");	
 		call_api("db", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591");	
 		document.getElementById('panel-body-id').style = "display:inline";
