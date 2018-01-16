@@ -23,7 +23,7 @@
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <script>
-	function call_api(name, url){
+	function call_api(name, method, url, data){
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
     			if (this.readyState == 4 && this.status == 200) {
@@ -37,20 +37,20 @@
 				}
     			}
   		};
-		document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button>';
-		document.getElementById(name+"-res-msg").innerHTML = 'checking '+name+' service...';
+      document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button>';
+      document.getElementById(name+"-res-msg").innerHTML = 'checking '+name+' service...';
   		xhttp.open("POST", "call_api.php", true);
   		xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  		xhttp.send("url="+url);
+  		xhttp.send("url="+url+"&data="+data+"&method="+method);
 	}
 
-	function check_btn(){
+	function run_checker(){
 		console.log("Run checking");
 		document.getElementById('panel-body-id').style = "display:none";
-		call_api("kong", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591");	
-		call_api("api", "http://164.115.35.168/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591");	
-		call_api("db", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591");	
-		call_api("cms", "http://164.115.35.74:8000/wcms/home");	
+		call_api("kong", "GET", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");	
+		call_api("api", "GET", "http://164.115.35.168/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");	
+		call_api("db", "PUT", "http://164.115.35.169/api/1.0/account?token=5a5dc5f7da77c&apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161424", '{"data":{"birthDate":"2532-05-22 00:00:00","bloodGroup":"ab","height":168,"phoneNumber":"0817264466","lastName":"มาลา","gender":"m","weight":63.01,"firstName":"ณรงค์ศักดิ์"}}');	
+		call_api("cms", "POST","http://164.115.35.169/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');	
 		document.getElementById('panel-body-id').style = "display:inline";
 	}	
     </script>
@@ -61,7 +61,7 @@
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-               RDU Services <button type="button" onclick="check_btn()" id="check_btn" class="btn btn-success btn-circle btn-lg"><span class="glyphicon glyphicon-play"></span></button>
+               RDU Services <button type="button" onclick="run_checker()" id="run_btn" class="btn btn-success btn-circle btn-lg"><span class="glyphicon glyphicon-play"></span></button>
             </div>
             <!-- .panel-heading -->
             <div class="panel-body" id="panel-body-id" style="display:none">
@@ -69,7 +69,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" class="collapsed">Kong Service</a> <a id="kong-title-id"></a>
+                                <a id="kong-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" class="collapsed">Kong Service</a>
                             </h4>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse" aria-expanded="false" style="">
@@ -79,7 +79,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="collapsed" aria-expanded="false">API Service</a> <a id="api-title-id"></a> 
+                                <a id="api-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="collapsed" aria-expanded="false">API Service</a>
                             </h4>
                         </div>
                         <div id="collapseFour" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
@@ -89,7 +89,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title" >
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" class="collapsed" aria-expanded="false">Database Service</a> <a id="db-title-id"></a> 
+                                <a id="db-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" class="collapsed" aria-expanded="false">Database Service</a> 
                             </h4>
                         </div>
                         <div id="collapseFive" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
@@ -99,7 +99,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title" >
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix" class="collapsed" aria-expanded="false">CMS Service</a> <a id="cms-title-id"></a>
+                                <a id="cms-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix" class="collapsed" aria-expanded="false">CMS Service</a>
                             </h4>
                         </div>
                         <div id="collapseSix" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
