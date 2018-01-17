@@ -23,20 +23,68 @@
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <script>
-	function call_api(name, method, url, data){
-		var xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function() {
-    			if (this.readyState == 4 && this.status == 200) {
-				console.log(this.responseText);
-				document.getElementById(name+"-res-msg").innerHTML = this.responseText;
-				if ( this.responseText == "service unavialable" ){
-					document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i></button>';
-					document.getElementById(name+"-res-msg").innerHTML = "Service is unavialable";
-				}else{
-					document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-info btn-circle"><i class="fa fa-check"></i></button>';
-				}
-    			}
-  		};
+
+    var max_success = 4; //number of APIs
+    var kong_success = 0;
+    var api168_success = 0;
+    var api237_success = 0;
+    var api238_success = 0;
+
+    function get_process(parent){
+      switch(parent){
+        case "kong":
+          return kong_success;
+        case "api168":
+          return api168_success;
+        case "api237":
+          return api237_success;
+        case "api238":
+          return api238_success;
+        default:
+          return 0;
+      }
+    }
+    
+    function update_progress(parent){
+      switch(parent){
+        case "kong":
+          kong_success++;
+          break;
+        case "api168":
+          api168_success++;
+          break;
+        case "api237":
+          api237_success++;
+          break;
+        case "api238":
+          api238_success++;
+          break;
+        default:
+        break;
+      }
+    }
+    
+    function call_api(parent, name, method, url, data){
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          console.log(this.responseText);
+          //console.log(JSON.parse(this.responseText));
+          var obj = JSON.parse(this.responseText)
+          document.getElementById(name+"-res-msg").innerHTML = "<div class=\"panel-body\">"+JSON.stringify(obj.result_data)+"</div>";
+          if ( obj.return_code != 0){ // error occurred!
+            document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i></button>';
+            document.getElementById(name+"-res-msg").innerHTML = JSON.stringify(obj.result_data);
+            document.getElementById(parent+"-title-id").innerHTML = '<button type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i></button>';
+          }else{
+            update_progress(parent);
+            if( get_process(parent) == max_success ){
+              document.getElementById(parent+"-title-id").innerHTML = '<button type="button" class="btn btn-success btn-circle"><i class="fa fa-check"></i></button>';
+            }
+            document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-success btn-circle"><i class="fa fa-check"></i></button>';
+          }
+        }
+      };
       document.getElementById(name+"-title-id").innerHTML = '<button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button>';
       document.getElementById(name+"-res-msg").innerHTML = 'checking '+name+' service...';
   		xhttp.open("POST", "call_api.php", true);
@@ -44,14 +92,84 @@
   		xhttp.send("url="+url+"&data="+data+"&method="+method);
 	}
 
+  function sub_checker(api){
+    document.getElementById(api+'-sub-panel').innerHTML = null;
+    var api_lists = ["Login","GetAccount","UpdateAccount", "News"];
+    var accordion = api + "accordion";
+    var panel = "<div class=\"panel-group\" id=\""+accordion+"\">";
+    
+    api_lists.forEach( function(apiName) {
+      var collapseName = api+"-sub-" + apiName + "-collapse";
+      var responeMsg = api+"-sub-" + apiName + "-res-msg";
+      var status = api + "-sub-" + apiName + "-title-id";
+      panel += "<div class=\"panel panel-success\">" +
+                    "<div class=\"panel-heading\">" +
+                        "<h4 class=\"panel-title\">" +
+                          "<a id=\""+ status +"\"></a> <a data-toggle=\"collapse\" data-parent=\"#" + accordion +"\" href=\"#" + collapseName + "\" aria-expanded=\"false\" class=\"collapsed\">" + apiName + "</a>" +
+                        "</h4>" +
+                    "</div>" +
+                    "<div id=\""+ collapseName +"\" class=\"panel-collapse collapse\" aria-expanded=\"false\" style=\"\">" +
+                      "<div class=\"panel-body\" id=\""+ responeMsg +"\">" +
+                        "n\a" +
+                      "</div>" +
+                    "</div>" +
+                "</div>";    
+      });
+    panel += "</div>";
+    document.getElementById(api+'-sub-panel').innerHTML += panel;
+  }
+  
 	function run_checker(){
 		console.log("Run checking");
+    
+    //Initailize Form
+    kong_success = 0;
+    api168_success = 0;
+    api237_success = 0;
+    api238_success = 0;
+    
+    sub_checker("kong");
+    sub_checker("api168");
+    sub_checker("api237");
+    sub_checker("api238");
 		document.getElementById('panel-body-id').style = "display:none";
-		call_api("kong", "GET", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");	
-		call_api("api", "GET", "http://164.115.35.168/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");	
-		call_api("db", "PUT", "http://164.115.35.169/api/1.0/account?token=5a5dc5f7da77c&apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161424", '{"data":{"birthDate":"2532-05-22 00:00:00","bloodGroup":"ab","height":168,"phoneNumber":"0817264466","lastName":"มาลา","gender":"m","weight":63.01,"firstName":"ณรงค์ศักดิ์"}}');	
-		call_api("cms", "POST","http://164.115.35.169/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');	
-		document.getElementById('panel-body-id').style = "display:inline";
+    document.getElementById("kong-title-id").innerHTML = '<button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button>';
+    document.getElementById("api168-title-id").innerHTML = '<button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button>';
+    document.getElementById("api237-title-id").innerHTML = '<button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button>';
+    document.getElementById("api238-title-id").innerHTML = '<button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button>';
+    
+    //Check Kong Services
+    call_api("kong","kong-sub-News", "GET", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");
+    call_api("kong","kong-sub-Login", "POST","http://164.115.35.169/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');    
+		call_api("kong","kong-sub-GetAccount", "GET", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");    
+    call_api("kong","kong-sub-UpdateAccount", "PUT", "http://164.115.35.169/api/1.0/account?token=5a5dc5f7da77c&apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161424", '{"data":{"birthDate":"2532-05-22 00:00:00","bloodGroup":"ab","height":168,"phoneNumber":"0817264466","lastName":"มาลา","gender":"m","weight":63.01,"firstName":"ณรงค์ศักดิ์"}}');    
+
+    //Check API @164.115.35.168
+    call_api("api168","api168-sub-News", "GET", "http://164.115.35.168/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");
+    call_api("api168","api168-sub-Login", "POST","http://164.115.35.168/uhosnetapi/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');    
+		call_api("api168","api168-sub-GetAccount", "GET", "http://164.115.35.168/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");    
+    call_api("api168","api168-sub-UpdateAccount", "PUT", "http://164.115.35.168/uhosnetapi/api/1.0/account?token=5a5dc5f7da77c&apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161424", '{"data":{"birthDate":"2532-05-22 00:00:00","bloodGroup":"ab","height":168,"phoneNumber":"0817264466","lastName":"มาลา","gender":"m","weight":63.01,"firstName":"ณรงค์ศักดิ์"}}');    
+    
+    //Check API @164.115.35.237
+    call_api("api237","api237-sub-News", "GET", "http://164.115.35.237/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");
+    call_api("api237","api237-sub-Login", "POST","http://164.115.35.237/uhosnetapi/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');    
+		call_api("api237","api237-sub-GetAccount", "GET", "http://164.115.35.237/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");    
+    call_api("api237","api237-sub-UpdateAccount", "PUT", "http://164.115.35.237/uhosnetapi/api/1.0/account?token=5a5dc5f7da77c&apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161424", '{"data":{"birthDate":"2532-05-22 00:00:00","bloodGroup":"ab","height":168,"phoneNumber":"0817264466","lastName":"มาลา","gender":"m","weight":63.01,"firstName":"ณรงค์ศักดิ์"}}');    
+    
+
+    //Check API @164.115.35.238
+    call_api("api238","api238-sub-News", "GET", "http://164.115.35.238/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");
+    call_api("api238","api238-sub-Login", "POST","http://164.115.35.238/uhosnetapi/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');    
+		call_api("api238","api238-sub-GetAccount", "GET", "http://164.115.35.238/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");    
+    call_api("api238","api238-sub-UpdateAccount", "PUT", "http://164.115.35.238/uhosnetapi/api/1.0/account?token=5a5dc5f7da77c&apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161424", '{"data":{"birthDate":"2532-05-22 00:00:00","bloodGroup":"ab","height":168,"phoneNumber":"0817264466","lastName":"มาลา","gender":"m","weight":63.01,"firstName":"ณรงค์ศักดิ์"}}');    
+    
+    //Check Database
+    call_api("db","db", "DB", "", "");	
+    
+    //Check F5 by login
+    call_api("f5","f5", "POST","http://164.115.35.245/uhosnetapi/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');	
+		
+    document.getElementById('panel-body-id').style = "display:inline";
 	}	
     </script>
 
@@ -59,51 +177,85 @@
 
 <body>
     <div class="col-lg-12">
-        <div class="panel panel-default">
+        <div class="panel panel-primary">
             <div class="panel-heading">
-               RDU Services <button type="button" onclick="run_checker()" id="run_btn" class="btn btn-success btn-circle btn-lg"><span class="glyphicon glyphicon-play"></span></button>
+              <button type="button" onclick="run_checker()" id="run_btn" class="btn btn-info btn-circle btn-lg"><span class="glyphicon glyphicon-play"></span></button> RDU Services
             </div>
             <!-- .panel-heading -->
             <div class="panel-body" id="panel-body-id" style="display:none">
                 <div class="panel-group" id="accordion">
-                    <div class="panel panel-default">
+                    <!-- kong -->
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a id="kong-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" class="collapsed">Kong Service</a>
+                                <a id="kong-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#kong-accordion" href="#collapseOne" aria-expanded="false" class="collapsed">Kong Services</a> 
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse" aria-expanded="false" style="">
+                            <div class="panel-body" id="kong-sub-panel" >
+                              <!-- sub api -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- API Services(164.115.35.168) -->
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a id="api168-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="collapsed" aria-expanded="false">API Services (168)</a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse" aria-expanded="false" style="">
+                            <div class="panel-body" id="api168-sub-panel">
+                              <!-- sub api -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- API Services(164.115.35.237) -->
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a id="api237-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" class="collapsed" aria-expanded="false">API Services (237)</a>
                             </h4>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse" aria-expanded="false" style="">
-                            <div class="panel-body" id="kong-res-msg"></div>
+                            <div class="panel-body" id="api237-sub-panel">
+                              <!-- sub api -->
+                            </div>
                         </div>
                     </div>
-                    <div class="panel panel-default">
+                    <!-- API Services(164.115.35.238) -->
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a id="api-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="collapsed" aria-expanded="false">API Service</a>
+                                <a id="api238-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="collapsed" aria-expanded="false">API Services (238)</a>
                             </h4>
                         </div>
-                        <div id="collapseFour" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
-                            <div class="panel-body" id="api-res-msg"></div>
+                        <div id="collapseFour" class="panel-collapse collapse" aria-expanded="false" style="">
+                            <div class="panel-body" id="api238-sub-panel">
+                              <!-- sub api -->
+                            </div>
                         </div>
                     </div>
-                    <div class="panel panel-default">
+                    <!-- database -->
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title" >
-                                <a id="db-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" class="collapsed" aria-expanded="false">Database Service</a> 
+                                <a id="db-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" class="collapsed" aria-expanded="false">Database Services</a> 
                             </h4>
                         </div>
                         <div id="collapseFive" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
                             <div class="panel-body" id="db-res-msg"></div>
                         </div>
                     </div>
-                    <div class="panel panel-default">
+                    <!-- F5 -->
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title" >
-                                <a id="cms-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix" class="collapsed" aria-expanded="false">CMS Service</a>
+                                <a id="f5-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix" class="collapsed" aria-expanded="false">Load Balance (F5)</a>
                             </h4>
                         </div>
                         <div id="collapseSix" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
-                            <div class="panel-body" id="cms-res-msg"></div>
+                            <div class="panel-body" id="f5-res-msg"></div>
                         </div>
                     </div>
                 </div>
