@@ -127,7 +127,7 @@
     //Check Kong Services
     call_api("kong","kong-sub-News", "GET", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");
     call_api("kong","kong-sub-Login", "POST","http://164.115.35.169/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');    
-		call_api("kong","kong-sub-GetAccount", "GET", "http://164.115.35.169/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");    
+		call_api("kong","kong-sub-GetAccount", "GET", "http://164.115.35.169/api/1.0/account/601?token=5a5d9f630019d", "");    
     call_api("kong","kong-sub-UpdateAccount", "PUT", "http://164.115.35.169/api/1.0/account?token=5a5dc5f7da77c&apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161424", '{"data":{"birthDate":"2532-05-22 00:00:00","bloodGroup":"ab","height":168,"phoneNumber":"0817264466","lastName":"มาลา","gender":"m","weight":63.01,"firstName":"ณรงค์ศักดิ์"}}');    
   }
   
@@ -138,7 +138,7 @@
     //Check API @164.115.35.168
     call_api("api168","api168-sub-News", "GET", "http://164.115.35.168/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");
     call_api("api168","api168-sub-Login", "POST","http://164.115.35.168/uhosnetapi/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');    
-		call_api("api168","api168-sub-GetAccount", "GET", "http://164.115.35.168/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");    
+		call_api("api168","api168-sub-GetAccount", "GET", "http://164.115.35.168/uhosnetapi/api/1.0/account/601?token=5a5d9f630019d", "");    
     call_api("api168","api168-sub-UpdateAccount", "PUT", "http://164.115.35.168/uhosnetapi/api/1.0/account?token=5a5dc5f7da77c&apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161424", '{"data":{"birthDate":"2532-05-22 00:00:00","bloodGroup":"ab","height":168,"phoneNumber":"0817264466","lastName":"มาลา","gender":"m","weight":63.01,"firstName":"ณรงค์ศักดิ์"}}'); 
   }
   
@@ -149,7 +149,7 @@
     //Check API @164.115.35.237
     call_api("api237","api237-sub-News", "GET", "http://164.115.35.237/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");
     call_api("api237","api237-sub-Login", "POST","http://164.115.35.237/uhosnetapi/api/1.0/login?apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161330", '{"data":{"device":{"notiToken":"","imei":"4bd5d93a-4fd6-43f6-81f5-915ce76706b2"},"userName":"pepsi7959","password":"mC2JWxey9PmkHGzKeyVl4g=="}}');    
-		call_api("api237","api237-sub-GetAccount", "GET", "http://164.115.35.237/uhosnetapi/api/1.0/newsgroup?apikey=2f8fef4a82ff4d10b58670c655d8c591", "");    
+		call_api("api237","api237-sub-GetAccount", "GET", "http://164.115.35.237/uhosnetapi/api/1.0/account/601?token=5a5d9f630019d", "");    
     call_api("api237","api237-sub-UpdateAccount", "PUT", "http://164.115.35.237/uhosnetapi/api/1.0/account?token=5a5dc5f7da77c&apikey=2f8fef4a82ff4d10b58670c655d8c591&msgId=201801161424", '{"data":{"birthDate":"2532-05-22 00:00:00","bloodGroup":"ab","height":168,"phoneNumber":"0817264466","lastName":"มาลา","gender":"m","weight":63.01,"firstName":"ณรงค์ศักดิ์"}}'); 
   }
   
@@ -214,7 +214,7 @@
     <div class="col-lg-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
-              <button type="button" onclick="run_all_checker()" id="run_btn" class="btn btn-info btn-circle btn-lg"><span class="glyphicon glyphicon-play"></span></button> RDU Services
+              <button type="button" onclick="run_all_checker()" id="run_btn" class="btn btn-info btn-circle btn-lg"><span class="glyphicon glyphicon-play"></span></button> ระบบตรวจสอบ RDU services
             </div>
             <!-- .panel-heading -->
             <div class="panel-body" id="panel-body-id" style="display:none">
@@ -223,7 +223,7 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                              <button type="button" onclick="run_kong()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="kong-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#kong-accordion" href="#collapseOne" aria-expanded="false" class="collapsed">Kong Services</a> 
+                              <button type="button" onclick="run_kong()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="kong-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#kong-accordion" href="#collapseOne" aria-expanded="false" class="collapsed">ตรวจสอบเครื่อง Kong (164.115.35.169)</a> 
                             </h4>
                         </div>
                         <div id="collapseOne" class="panel-collapse collapse" aria-expanded="false" style="">
@@ -236,7 +236,7 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                              <button type="button" onclick="run_api168()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button>   <a id="api168-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="collapsed" aria-expanded="false">API Services (168)</a>
+                              <button type="button" onclick="run_api168()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button>   <a id="api168-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="collapsed" aria-expanded="false">ตรวจสอบเครื่อง Core API (164.115.35.168)</a>
                             </h4>
                         </div>
                         <div id="collapseTwo" class="panel-collapse collapse" aria-expanded="false" style="">
@@ -249,7 +249,7 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                              <button type="button" onclick="run_api237()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="api237-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" class="collapsed" aria-expanded="false">API Services (237)</a>
+                              <button type="button" onclick="run_api237()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="api237-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" class="collapsed" aria-expanded="false">ตรวจสอบเครื่อง Core API (164.115.35.237)</a>
                             </h4>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse" aria-expanded="false" style="">
@@ -262,7 +262,7 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                              <button type="button" onclick="run_api238()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="api238-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="collapsed" aria-expanded="false">API Services (238)</a>
+                              <button type="button" onclick="run_api238()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="api238-title-id"><button type="button" class="btn btn-warning btn-circle" ><i class="fa fa-refresh"></i></button></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="collapsed" aria-expanded="false">ตรวจสอบเครื่อง Core API (164.115.35.238)</a>
                             </h4>
                         </div>
                         <div id="collapseFour" class="panel-collapse collapse" aria-expanded="false" style="">
@@ -275,7 +275,7 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title" >
-                              <button type="button" onclick="run_db()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="db-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" class="collapsed" aria-expanded="false">Database Services</a> 
+                              <button type="button" onclick="run_db()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="db-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" class="collapsed" aria-expanded="false">ตรวจสอบการทำงาน Database </a> 
                             </h4>
                         </div>
                         <div id="collapseFive" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
@@ -286,7 +286,7 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <h4 class="panel-title" >
-                              <button type="button" onclick="run_f5()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="f5-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix" class="collapsed" aria-expanded="false">Load Balance (F5)</a>
+                              <button type="button" onclick="run_f5()" id="run_btn" class="btn btn-info btn-circle btn-sm"><span class="glyphicon glyphicon-play"></span></button> <a id="f5-title-id"></a> <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix" class="collapsed" aria-expanded="false">ตรวจสอบการทำงาน F5</a>
                             </h4>
                         </div>
                         <div id="collapseSix" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
